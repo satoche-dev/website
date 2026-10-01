@@ -42,11 +42,21 @@ python3 -m http.server 4321 --bind 127.0.0.1 --directory public
 
 ## Deployment
 
-GitHub Pages, from the root `.github/workflows/pages.yml`: each push to `main` that changes
-`website/public/` publishes that folder.
+The monorepo is private, so the page is served from a public mirror, `satoche-dev/satoche-web`,
+branch `gh-pages`. The root `.github/workflows/pages.yml` copies `website/public/` there on each push
+to `main` that changes it. Never edit the mirror by hand: the next publish overwrites it.
 
-The published page is public on purpose: anyone can check that it has no tracker, no cookie and no
+The mirror is public on purpose: anyone can check that the page has no tracker, no cookie and no
 third-party request.
+
+One-time setup:
+
+1. Create an SSH key pair with no passphrase: `ssh-keygen -t ed25519 -N '' -f deploy_key`.
+2. Add `deploy_key.pub` to `satoche-web` (Settings, Deploy keys) with write access.
+3. Save the content of `deploy_key` as the secret `WEBSITE_DEPLOY_KEY` in `satoche` (Settings, Secrets
+   and variables, Actions). Then delete both local files.
+4. In `satoche-web`, set Pages to deploy from branch `gh-pages`, folder `/ (root)`, with the custom
+   domain `satoche.dev`.
 
 GitHub Pages sets no custom HTTP headers. The security policy and the `noindex` live in the page, as
 meta tags.
