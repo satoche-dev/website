@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="fr">
+  <title>Satoche</title>
+  <subtitle>Votre rapport fiscal crypto, sans rien partager.</subtitle>
+  <id>urn:uuid:5d0f6c2e-8b1a-4f5e-9c43-2a7f1e0b6d91</id>
+  <link rel="alternate" href="./"/>
+  <updated>2026-09-30T12:00:00Z</updated>
+  <author><name>L'équipe Satoche</name></author>
+  <entry>
+    <title>Satoche sort le 1er janvier 2027</title>
+    <id>urn:uuid:9b3e2f71-4c6d-4a8e-b0f5-7d1c3e9a2b64</id>
+    <link rel="alternate" href="./#info"/>
+    <updated>2026-09-30T12:00:00Z</updated>
+    <content type="text">La première version sort le 1er janvier 2027, à temps pour générer votre rapport 2026. Ouverte à tous, sans inscription. Le lien de téléchargement sera publié sur le site et dans ce fil.</content>
+  </entry>
+</feed>

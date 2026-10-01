@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Satoche — Votre rapport fiscal crypto, sans rien partager</title>
+<meta name="description" content="Satoche calcule vos plus-values crypto et prépare vos formulaires 2086, 2042-C et 3916-bis sur votre ordinateur. Vos données restent chez vous. Sortie prévue le 1er janvier 2027.">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<link rel="alternate" type="application/atom+xml" title="Satoche" href="feed.xml">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath fill='%23E11D74' fill-rule='evenodd' d='M16 100a84 84 0 1 0 168 0a84 84 0 1 0-168 0ZM100 46C126 74 126 126 100 154C74 126 74 74 100 46Z'/%3E%3Cpath fill='%239E1452' d='M100 74C110 90 110 110 100 126C90 110 90 90 100 74Z'/%3E%3C/svg%3E">
+<style>
+  /* Tokens of the Satoche identity. Dark is the default theme. */
+  :root {
+    --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+    --bg: #0b0b12;
+    --surface: #15151f;
+    --border: #2a2a3a;
+    --text: #f5f5f7;
+    --text-muted: #9a9ab0;
+    --brand: #e11d74;          /* logo, fills, large type. Never small text. */
+    --brand-text: #f0478f;     /* small pink text */
+    --brand-deep: #9e1452;
+    --on-brand: #ffffff;
+    --warn: #f5b83d;
+    --on-warn: #0b0b12;
+    --gutter: 18px;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #faf7f5;
+      --surface: #ffffff;
+      --border: #e6dfdb;
+      --text: #0b0b12;
+      --text-muted: #5b5b70;
+      --brand: #c8125f;
+      --brand-text: #c8125f;
+      --brand-deep: #8a0c41;
+      --on-brand: #ffffff;
+      /* The app tokens define no light variant for --warn (the colour of the online assistant): a darker value, 4.5:1 or more on --bg and --surface. */
+      --warn: #8a5a00;
+      --on-warn: #ffffff;
+      color-scheme: light;
+    }
+  }
+  @media (min-width: 720px) { :root { --gutter: 32px; } }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.55 var(--font-ui);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  a { color: inherit; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; border-radius: 2px; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 var(--gutter); }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  svg.sym { display: block; }
+
+  /* Mono voice: labels, dates, numbers */
+  .eyebrow { font: 500 12px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin: 0; }
+
+  /* Header */
+  header.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+  .logo { display: block; line-height: 0; }
+  .logo svg { width: 118px; height: auto; }
+  .top .status { display: none; }
+  @media (min-width: 720px) { .top .status { display: inline; } }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 48px; padding: 0 22px;
+    border: 0; border-radius: 4px;
+    background: var(--brand); color: var(--on-brand);
+    font: 600 16px/1 var(--font-ui);
+    text-decoration: none; cursor: pointer;
+  }
+  .btn:hover { background: var(--brand-deep); }
+  .btn.small { min-height: 40px; padding: 0 16px; font-size: 15px; }
+  .btn svg { flex: none; }
+
+  /* Hero: a local statement, the data stays visible on the user's computer */
+  .hero { position: relative; overflow: clip; padding: 32px 0 48px; }
+  .hero .wrap { position: relative; display: grid; gap: 28px; }
+  .hero-copy, .hero-rest, .doc { position: relative; z-index: 1; }
+  .hero-copy { margin-bottom: 4px; }
+  @media (max-width: 959px) { .hero-rest { order: 2; } .doc { order: 3; margin-top: 0; } }
+  @media (min-width: 960px) { .hero-copy { margin-bottom: 32px; } }
+  @media (min-width: 960px) {
+    .hero { padding: 88px 0 112px; }
+    .hero .wrap { grid-template-columns: 1.08fr .92fr; grid-template-rows: auto 1fr; column-gap: 80px; row-gap: 0; }
+    .hero-copy { grid-column: 1; grid-row: 1; }
+    .hero-rest { grid-column: 1; grid-row: 2; align-self: start; }
+    .doc { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+  }
+  h1 { font: 700 clamp(38px, 8.6vw, 64px)/1 var(--font-display); letter-spacing: -.05em; margin: 20px 0 0; }
+  h1 span { display: block; }
+  h1 .keep { color: var(--brand); }
+  .lede { font-size: 19px; line-height: 1.55; max-width: 32em; margin: 0 0 18px; }
+  .lede .ok { color: var(--brand-text); }
+  .lede .accent { color: var(--brand-text); }
+  .hero-rest .btn { margin-top: 10px; }
+  .proofs { list-style: none; margin: 0 auto; padding: 0 var(--gutter); display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font: 500 12px/1.4 var(--font-mono); letter-spacing: .04em; text-transform: uppercase; }
+  @media (min-width: 900px) { .proofs { grid-template-columns: repeat(4, 1fr); } }
+  .proofs li { padding: 14px 12px 14px 0; }
+  .proofs li::before { content: "✓"; margin-right: 8px; color: var(--brand-text); font-weight: 700; }
+  .cta-row { margin: 32px 0 0; }
+  .cta-note { font: 14px/1.5 var(--font-ui); color: var(--text-muted); max-width: 34em; margin: 12px 0 0; }
+  .legal { font: 14px/1.55 var(--font-ui); color: var(--text-muted); max-width: 44em; margin: 32px 0 0; }
+  .legal a { color: var(--text); }
+
+  /* The app window: what the user sees on their own computer */
+  .doc { width: 100%; max-width: 560px; margin: 28px auto 0; }
+  .win { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 0 0 1px rgba(0,0,0,.25), 0 30px 70px -20px rgba(0,0,0,.6), 0 12px 24px -12px rgba(0,0,0,.4); }
+  .win-bar { position: relative; display: flex; align-items: center; height: 40px; padding: 0 14px; border-bottom: 1px solid var(--border); border-radius: 12px 12px 0 0; background: color-mix(in srgb, var(--text) 4%, var(--surface)); }
+  .lights { display: flex; gap: 8px; }
+  .lights i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.25); }
+  .lights i:nth-child(2) { background: #febc2e; }
+  .lights i:nth-child(3) { background: #28c840; }
+  .win-name { position: absolute; left: 0; right: 0; text-align: center; font: 600 13px/1 var(--font-ui); color: var(--text-muted); pointer-events: none; }
+  .win-main { display: grid; }
+  @media (min-width: 560px) { .win-main { grid-template-columns: 150px 1fr; } }
+  .side { display: flex; gap: 4px; padding: 10px; overflow: hidden; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--text) 5%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); font: 500 13px/1.2 var(--font-ui); }
+  @media (min-width: 560px) { .side { flex-direction: column; border-bottom: 0; border-right: 1px solid var(--border); padding: 14px 10px; border-radius: 0 0 0 0; } }
+  .side span { padding: 7px 10px; border-radius: 6px; color: var(--text-muted); white-space: nowrap; }
+  .side .on { background: color-mix(in srgb, var(--brand) 22%, transparent); color: var(--text); }
+  .side small { display: none; margin: 10px 10px 4px; font: 600 10px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+  @media (min-width: 560px) { .side small { display: block; } }
+  .win-body { padding: 6px 16px 16px; font: 13px/1.4 var(--font-mono); font-variant-numeric: tabular-nums; min-width: 0; }
+  .win-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 12px 0 4px; }
+  .win-title { margin: 0; font: 600 12px/1.4 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
+  .line { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+  .line span:first-child { color: var(--text-muted); }
+  .line span:last-child { white-space: nowrap; }
+  .line.result { border-bottom: 0; padding-top: 14px; font-size: 17px; font-weight: 700; }
+  .line.result span:first-child { color: var(--text); }
+  .line.result span:last-child { color: var(--brand-text); }
+  .stamp {
+    position: absolute; right: 10px; top: -22px; z-index: 2;
+    transform: rotate(4deg);
+    border: 2px solid var(--brand-text); color: var(--brand-text);
+    background: var(--bg);
+    padding: 8px 12px; border-radius: 4px;
+    font: 700 13px/1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  }
+  .doc-status { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 9px 14px; border-top: 1px solid var(--border); border-radius: 0 0 12px 12px; background: color-mix(in srgb, var(--text) 4%, var(--surface)); font: 12px/1.3 var(--font-mono); color: var(--text-muted); }
+  .doc-status div { display: flex; align-items: center; gap: 6px; }
+  .doc-status svg { flex: none; }
+  .doc-status .net { color: var(--brand-text); font-weight: 700; }
+  .doc-note { margin: 14px 0 0; font: 12px/1.4 var(--font-mono); color: var(--text-muted); text-align: center; }
+  @media (prefers-reduced-motion: no-preference) {
+    .line { opacity: 0; transform: translateY(6px); animation: rise .5s ease-out forwards; animation-delay: calc(.3s + var(--i) * .35s); }
+    .stamp { opacity: 0; animation: stamp-in .35s cubic-bezier(.2, 1.6, .4, 1) 2.4s forwards; }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+    @keyframes stamp-in { from { opacity: 0; transform: rotate(4deg) scale(1.5); } to { opacity: 1; transform: rotate(4deg) scale(1); } }
+  }
+
+  /* Sections: a numbered rail, then the content */
+  section { padding: 48px 0; border-top: 1px solid var(--border); }
+  @media (min-width: 960px) { section { padding: 88px 0; } }
+  .rail { display: flex; align-items: center; gap: 14px; margin: 0 0 28px; font: 500 12px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+  .rail .no { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 4px; background: var(--brand); color: var(--on-brand); font-weight: 700; letter-spacing: 0; }
+  .rail::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  h2 { font: 700 clamp(30px, 4.6vw, 54px)/1.04 var(--font-display); letter-spacing: -.045em; margin: 0 0 32px; max-width: 18em; }
+  h2.second { margin-top: 56px; }
+  h2 .accent { color: var(--warn); }
+  h3 { font: 700 19px/1.3 var(--font-display); margin: 0 0 8px; letter-spacing: -.02em; }
+  .intro { font-size: 18px; max-width: 38em; margin: 0 0 28px; }
+  h3.sub { font: 500 12px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 16px; }
+
+  /* Them and us */
+  .versus { display: grid; gap: 16px; margin: 8px 0 0; }
+  @media (min-width: 960px) { .versus { grid-template-columns: 1fr 1fr; align-items: stretch; } }
+  .db { position: relative; margin: 0; border-radius: 8px; overflow: hidden; container-type: inline-size; font: 13px/1.2 var(--font-mono); font-variant-numeric: tabular-nums; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); }
+  .db-them { --db-bg: var(--surface); --db-red: var(--warn); border-color: color-mix(in srgb, var(--warn) 55%, var(--border)); }
+  .db-us { border-color: color-mix(in srgb, var(--brand-text) 55%, var(--border)); background: var(--bg); }
+  .db-top, .db-caption { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; }
+  .db-top { font-weight: 700; border-bottom: 1px solid var(--border); }
+  .db-caption { padding-bottom: 10px; color: var(--text-muted); }
+  .db-sent, .db-count { font-weight: 700; white-space: nowrap; }
+  .db-them .db-sent, .db-them .db-count { color: var(--warn); }
+  .db-us .db-sent, .db-us .db-count { color: var(--brand-text); }
+
+  .lane { display: flex; align-items: center; gap: 10px; padding: 22px 16px; border-bottom: 1px solid var(--border); min-height: 150px; }
+  .node { flex: none; display: grid; justify-items: center; gap: 6px; width: 76px; text-align: center; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; }
+  .node-srv { color: var(--warn); }
+  .node-ghost { color: var(--text-muted); }
+  .wire { position: relative; flex: 1; height: 0; border-top: 2px dashed var(--border); min-width: 96px; }
+  .pkt { position: absolute; top: 0; left: 0; padding: 4px 7px; border-radius: 3px; background: var(--warn); color: var(--on-warn); font-size: 11px; font-weight: 700; white-space: nowrap; opacity: 0; animation: pkt-send 7.2s linear infinite; animation-delay: var(--d); }
+  @keyframes pkt-send {
+    0% { left: 0; transform: translate(0, -50%); opacity: 0; }
+    6% { opacity: 1; }
+    14% { opacity: 1; }
+    16.6% { left: 100%; transform: translate(-100%, -50%); opacity: 0; }
+    100% { left: 100%; transform: translate(-100%, -50%); opacity: 0; }
+  }
+  .node-home { width: auto; flex: 1.5; min-width: 0; }
+  .laptop { display: flex; flex-direction: column; align-items: center; width: 100%; }
+  .laptop-screen { position: relative; width: 100%; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 5px; min-height: 84px; padding: 16px 10px 12px; border: 2px solid currentColor; border-radius: 6px 6px 0 0; }
+  .laptop-base { width: calc(100% + 18px); height: 8px; background: currentColor; clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%); }
+  .db-them .laptop { color: var(--text); }
+  .db-us .laptop { color: var(--brand-text); }
+  .laptop-lock { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); padding: 0 4px; background: var(--bg); color: var(--brand-text); box-sizing: content-box; }
+  .chip { padding: 3px 6px; border-radius: 3px; background: color-mix(in srgb, var(--brand-text) 16%, transparent); color: var(--text); font-size: 10px; font-weight: 700; text-transform: none; letter-spacing: 0; animation: chip-stay 3.6s ease-in-out infinite; }
+  .db-them .chip { background: color-mix(in srgb, var(--warn) 16%, transparent); animation: none; }
+  .chip:nth-of-type(2) { animation-delay: .5s; } .chip:nth-of-type(3) { animation-delay: 1s; } .chip:nth-of-type(4) { animation-delay: 1.5s; } .chip:nth-of-type(5) { animation-delay: 2s; }
+  .db-them .node-home { flex: .7; }
+  .db-them .node-srv { width: auto; flex: 1.5; min-width: 0; }
+  .srv-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+  .db-them .srv-chips .chip { animation: chip-stored 7.2s linear infinite backwards; animation-delay: calc(var(--d) + 1.2s); }
+  @keyframes chip-stored { 0% { opacity: 0; } 4% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes chip-stay { 50% { transform: translateY(-2px); } }
+  .wire-cut { flex: .8; }
+  .zero { position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); display: block; color: var(--brand-text); font-weight: 700; font-size: 11px; line-height: 0; }
+  .zero svg { display: block; }
+  .zero-label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 8px; line-height: 1.2; white-space: nowrap; }
+
+  .db-head, .db-row { display: grid; grid-template-columns: 1.7fr .45fr 1.15fr 1fr 1fr; gap: 10px; align-items: center; padding: 0 16px; height: 32px; }
+  .db-head { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .db-row { border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .db-head span, .db-row span { overflow: hidden; text-overflow: ellipsis; }
+  .db-head span:nth-child(n+4), .db-row span:nth-child(n+4) { text-align: right; }
+  @container (max-width: 520px) {
+    .col-addr { display: none; }
+    .db-head, .db-row { grid-template-columns: 1.6fr .45fr 1fr 1fr; gap: 8px; }
+  }
+  .db-window { position: relative; flex: none; height: 190px; overflow: hidden; }
+  .db-window::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(var(--db-bg), transparent 14%, transparent 80%, var(--db-bg)); }
+  .db-rows { animation: db-scroll 36s linear infinite; }
+  @keyframes db-scroll { to { transform: translateY(-50%); } }
+  .db-them .is-you { background: color-mix(in srgb, var(--warn) 22%, transparent); box-shadow: inset 3px 0 0 var(--warn); color: var(--text); font-weight: 700; }
+  .db-us .db-head, .db-us .db-row { grid-template-columns: 1.3fr 1fr 1fr 1fr .8fr; }
+  .db-us .db-head span + span, .db-us .db-row span + span { text-align: right; }
+  .db-us .dash { color: var(--text-muted); }
+  .db-us .pay { color: var(--brand-text); font-weight: 700; }
+  @container (max-width: 520px) { .db-us .db-head, .db-us .db-row { grid-template-columns: 1.3fr 1fr 1fr .8fr; } }
+  .db-empty { flex: 1; min-height: 100px; display: grid; place-content: center; justify-items: center; gap: 10px; padding: 24px; text-align: center; color: var(--brand-text); }
+  .db-empty strong { font: 700 30px/1 var(--font-display); letter-spacing: -.03em; color: var(--text); }
+
+  .db-breach { position: absolute; left: 0; right: 0; bottom: 0; height: 190px; display: grid; place-content: center; justify-items: center; gap: 14px; pointer-events: none; }
+  .db-window::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; z-index: 1; background: var(--warn); box-shadow: 0 0 18px 2px var(--warn); opacity: 0; }
+  .db-stamp { padding: 10px 20px; border: 3px solid var(--warn); border-radius: 4px; background: color-mix(in srgb, var(--db-bg) 88%, transparent); color: var(--warn); font: 800 30px/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; opacity: 0; transform: rotate(-7deg) scale(1.6); }
+  .db-note { padding: 6px 10px; background: var(--db-bg); color: var(--text); font-size: 12px; opacity: 0; }
+  .db-them.breached .db-window::before { animation: db-scan 1s ease-in forwards; }
+  .db-them.breached .db-rows { color: var(--warn); transition: color .4s .6s; }
+  .db-them.breached .db-stamp { animation: db-stamp .35s .9s cubic-bezier(.2, 1.6, .4, 1) forwards; }
+  .db-them.breached .db-note { animation: db-fade .3s 1.2s forwards; }
+  @keyframes db-scan { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 1; } }
+  @keyframes db-stamp { to { opacity: 1; transform: rotate(-7deg) scale(1); } }
+  @keyframes db-fade { to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .db-rows, .chip, .db-them .srv-chips .chip { animation: none; }
+    .pkt { animation: none; opacity: 1; position: static; display: inline-block; margin: 2px; transform: none; }
+    .wire:has(.pkt) { height: auto; border: 0; display: flex; flex-wrap: wrap; justify-content: center; }
+    .db-stamp { opacity: 1; transform: rotate(-7deg); }
+    .db-note { opacity: 1; }
+  }
+
+  @media (max-width: 640px) {
+    .db-us .db-row:nth-of-type(n+3), .db-us .db-empty { display: none; }
+    .db-window { height: 150px; }
+    .db-breach { height: 150px; }
+    .lane { min-height: 120px; padding: 16px; }
+  }
+
+  /* Public leaks: folded, small, dated and sourced */
+  .leaks { margin: 0 0 28px; padding: 16px 0 4px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .linklike { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .linklike::after { content: " +"; }
+  .linklike[aria-expanded="true"]::after { content: " \2212"; }
+  .linklike:focus-visible { outline: 2px solid var(--brand-text); outline-offset: 2px; }
+  .facts { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; font: 13px/1.5 var(--font-ui); color: var(--text-muted); }
+  .facts li { display: grid; gap: 2px 16px; }
+  @media (min-width: 720px) { .facts li { grid-template-columns: 120px 1fr; } }
+  .facts .date { font: 600 12px/1.5 var(--font-mono); }
+  .facts sup { font: 600 11px/0 var(--font-mono); margin-left: 2px; }
+  .facts sup a, .info sup a { color: inherit; text-decoration: none; }
+  .sources { margin: 0 0 12px; padding-left: 18px; font: 12px/1.6 var(--font-ui); color: var(--text-muted); max-width: 60em; }
+  .sources li { padding: 2px 0; }
+  .sources li:target { color: var(--text); }
+  .sources a { color: inherit; text-underline-offset: 2px; overflow-wrap: anywhere; }
+
+  /* Steps */
+  .steps { display: grid; grid-template-columns: 1fr; gap: 28px 24px; counter-reset: step; margin: 56px 0 0; padding: 0; list-style: none; }
+  @media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .steps h3 { font-size: 16px; } .steps p { font-size: 14px; line-height: 1.45; } }
+  .steps li { position: relative; border-top: 1px solid var(--border); padding-top: 22px; }
+  .steps li::before { counter-increment: step; content: counter(step); position: absolute; top: -17px; left: 0; display: grid; place-items: center; width: 33px; height: 33px; border-radius: 4px; background: var(--bg); border: 1px solid var(--brand); color: var(--brand-text); font: 700 14px/1 var(--font-mono); }
+  .steps p { margin: 0; color: var(--text-muted); }
+
+  /* Pricing */
+  .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 8px 0 20px; }
+  @media (max-width: 560px) { .plan { padding: 16px 14px; } .plan-price { font-size: 38px; } .plan h3 { font-size: 16px; margin-top: 10px; } .plan p:last-child { font-size: 14px; } }
+  .plan { padding: 22px 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+  .plan-paid { border: 2px solid var(--brand); }
+  .plan-price { margin: 0 0 4px; font: 700 52px/1 var(--font-display); letter-spacing: -.05em; }
+  .plan-paid .plan-price { color: var(--brand); }
+  .plan h3 { margin-top: 16px; }
+  .plan p:last-child { margin: 0; color: var(--text-muted); }
+  .plan ul { margin: 0; padding: 0; list-style: none; color: var(--text-muted); }
+  .plan li { padding: 8px 0; border-top: 1px solid var(--border); }
+  .plan li:first-child { border-top: 0; padding-top: 0; }
+  .plan-note { max-width: 40em; margin: 0; font-size: 19px; }
+  .plan-note strong { font-weight: 400; color: var(--brand-text); }
+
+  /* Scope of the first version */
+  .scope-row { display: grid; grid-template-columns: 200px 1fr; gap: 4px 24px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .scope-row:first-child { border-top: 1px solid var(--text); }
+  .scope .k { font: 500 12px/1.9 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+  .scope .now { font-weight: 600; }
+  .scope-next { margin: 16px 0 0; color: var(--text-muted); font-size: 15px; }
+  @media (max-width: 639px) { .scope-row { grid-template-columns: 120px 1fr; gap: 12px; } .scope .k { line-height: 1.5; } }
+
+  /* Stay informed */
+  .info { background: var(--surface); position: relative; overflow: clip; }
+  .info .wrap { position: relative; }
+  .info-grid { display: grid; gap: 40px; }
+  @media (min-width: 960px) { .info-grid { grid-template-columns: .9fr 1.1fr; } }
+  .info p { max-width: 30em; }
+  .info .fine { font: 14px/1.5 var(--font-ui); color: var(--text-muted); margin-top: 16px; }
+  .info .fine sup { font: 600 11px/0 var(--font-mono); }
+  .info .fine sup a { text-decoration: none; }
+  .rdv { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .rdv li { display: grid; grid-template-columns: 28px 1fr; gap: 16px; padding: 18px 0; border-top: 1px solid var(--border); }
+  .rdv li:first-child { border-top: 1px solid var(--text); }
+  .rdv .ico { margin-top: 2px; color: var(--brand-text); }
+  .rdv p { margin: 0 0 12px; color: var(--text-muted); }
+  .info .rdv .btn { background: transparent; color: var(--text); border: 1px solid var(--text); }
+  .info .rdv .btn:hover { background: var(--text); color: var(--bg); }
+  .info .btn[aria-disabled="true"] { color: var(--text-muted); border-color: var(--border); cursor: default; }
+  .info .btn[aria-disabled="true"]:hover { background: transparent; color: var(--text-muted); }
+
+  /* FAQ */
+  details { border-bottom: 1px solid var(--border); }
+  details:first-of-type { border-top: 1px solid var(--text); }
+  summary { cursor: pointer; list-style: none; padding: 20px 32px 20px 0; position: relative; font: 600 18px/1.4 var(--font-display); letter-spacing: -.01em; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; position: absolute; right: 0; top: 18px; font: 400 24px/1 var(--font-mono); color: var(--brand-text); }
+  details[open] summary::after { content: "−"; }
+  details p { margin: 0 0 20px; max-width: 42em; color: var(--text-muted); }
+
+  /* Footer */
+  body > footer { border-top: 1px solid var(--border); padding: 28px 0 36px; font-size: 13px; color: var(--text-muted); }
+  body > footer .wrap { display: grid; gap: 12px; }
+  body > footer .logo svg { width: 132px; margin-bottom: 8px; }
+  body > footer a { color: var(--text); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="wm" viewBox="0 0 701.5 200">
+      <path style="fill:var(--text)" d="M66.92 152.38Q50.43 152.38 39.89 145.24Q29.35 138.1 27.14 124.84L46.86 119.74Q48.05 125.69 50.86 129.09Q53.66 132.49 57.83 133.94Q61.99 135.38 66.92 135.38Q74.4 135.38 77.97 132.75Q81.54 130.11 81.54 126.2Q81.54 122.29 78.14 120.16Q74.74 118.04 67.26 116.68L62.5 115.83Q53.66 114.13 46.35 111.16Q39.04 108.18 34.62 102.91Q30.2 97.64 30.2 89.31Q30.2 76.73 39.38 70.02Q48.56 63.3 63.52 63.3Q77.63 63.3 86.98 69.59Q96.33 75.88 99.22 86.08L79.33 92.2Q77.97 85.74 73.81 83.02Q69.64 80.3 63.52 80.3Q57.4 80.3 54.17 82.42Q50.94 84.55 50.94 88.29Q50.94 92.37 54.34 94.32Q57.74 96.28 63.52 97.3L68.28 98.15Q77.8 99.85 85.54 102.66Q93.27 105.46 97.78 110.64Q102.28 115.83 102.28 124.67Q102.28 137.93 92.68 145.16Q83.07 152.38 66.92 152.38ZM147.16 152.38Q138.15 152.38 131.01 149.24Q123.87 146.09 119.71 140.06Q115.54 134.02 115.54 125.35Q115.54 116.68 119.71 110.81Q123.87 104.95 131.27 101.97Q138.66 99.0 148.18 99.0L171.3 99.0L171.3 94.24Q171.3 88.29 167.56 84.46Q163.82 80.64 155.66 80.64Q147.67 80.64 143.76 84.3Q139.85 87.95 138.66 93.73L118.94 87.1Q120.98 80.64 125.49 75.28Q129.99 69.93 137.56 66.61Q145.12 63.3 156.0 63.3Q172.66 63.3 182.35 71.63Q192.04 79.96 192.04 95.77L192.04 127.22Q192.04 132.32 196.8 132.32L203.6 132.32L203.6 150.0L189.32 150.0Q183.03 150.0 178.95 146.94Q174.87 143.88 174.87 138.78L174.87 138.61L171.64 138.61Q170.96 140.65 168.58 143.97Q166.2 147.28 161.1 149.83Q156.0 152.38 147.16 152.38ZM150.9 135.04Q159.91 135.04 165.61 130.03Q171.3 125.01 171.3 116.68L171.3 114.98L149.71 114.98Q143.76 114.98 140.36 117.53Q136.96 120.08 136.96 124.67Q136.96 129.26 140.53 132.15Q144.1 135.04 150.9 135.04ZM251.54 150.0Q243.21 150.0 238.03 144.81Q232.84 139.63 232.84 130.96L232.84 83.36L211.76 83.36L211.76 65.68L232.84 65.68L232.84 39.5L254.26 39.5L254.26 65.68L277.38 65.68L277.38 83.36L254.26 83.36L254.26 127.22Q254.26 132.32 259.02 132.32L275.34 132.32L275.34 150.0L251.54 150.0ZM430.55 152.38Q418.31 152.38 408.37 147.28Q398.42 142.18 392.64 132.49Q386.86 122.8 386.86 109.03L386.86 106.65Q386.86 92.88 392.64 83.19Q398.42 73.5 408.37 68.4Q418.31 63.3 430.55 63.3Q442.62 63.3 451.29 67.55Q459.96 71.8 465.32 79.19Q470.67 86.59 472.37 95.94L451.63 100.36Q450.95 95.26 448.57 91.18Q446.19 87.1 441.86 84.72Q437.52 82.34 431.06 82.34Q424.6 82.34 419.42 85.14Q414.23 87.95 411.26 93.47Q408.28 99.0 408.28 106.99L408.28 108.69Q408.28 116.68 411.26 122.2Q414.23 127.73 419.42 130.53Q424.6 133.34 431.06 133.34Q440.75 133.34 445.77 128.32Q450.78 123.31 452.14 115.15L472.88 120.08Q470.67 129.09 465.32 136.49Q459.96 143.88 451.29 148.13Q442.62 152.38 430.55 152.38ZM490.56 150.0L490.56 31.0L511.98 31.0L511.98 76.05L515.04 76.05Q516.4 73.33 519.29 70.61Q522.18 67.89 527.03 66.1Q531.87 64.32 539.35 64.32Q549.21 64.32 556.61 68.82Q564.0 73.33 568.08 81.23Q572.16 89.14 572.16 99.68L572.16 150.0L550.74 150.0L550.74 101.38Q550.74 91.86 546.07 87.1Q541.39 82.34 532.72 82.34Q522.86 82.34 517.42 88.88Q511.98 95.43 511.98 107.16L511.98 150.0L490.56 150.0ZM633.7 152.38Q621.12 152.38 611.52 147.03Q601.91 141.67 596.56 131.9Q591.2 122.12 591.2 108.86L591.2 106.82Q591.2 93.56 596.47 83.78Q601.74 74.01 611.26 68.66Q620.78 63.3 633.36 63.3Q645.77 63.3 654.95 68.82Q664.13 74.35 669.23 84.12Q674.33 93.9 674.33 106.82L674.33 114.13L612.96 114.13Q613.3 122.8 619.42 128.24Q625.54 133.68 634.38 133.68Q643.39 133.68 647.64 129.77Q651.89 125.86 654.1 121.1L671.61 130.28Q669.23 134.7 664.73 139.88Q660.22 145.07 652.74 148.72Q645.26 152.38 633.7 152.38ZM613.13 98.15L652.57 98.15Q651.89 90.84 646.71 86.42Q641.52 82.0 633.19 82.0Q624.52 82.0 619.42 86.42Q614.32 90.84 613.13 98.15Z"/>
+      <g transform="translate(279.10 54.82) scale(0.5302)">
+        <path style="fill:var(--brand)" fill-rule="evenodd" d="M16 100a84 84 0 1 0 168 0a84 84 0 1 0-168 0ZM100 46C126 74 126 126 100 154C74 126 74 74 100 46Z"/>
+        <path style="fill:var(--brand-deep)" d="M100 74C110 90 110 110 100 126C90 110 90 90 100 74Z"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#" aria-label="Satoche, accueil"><svg class="sym" viewBox="0 0 701.5 200" role="img" aria-hidden="true"><use href="#wm"/></svg></a>
+    <span class="status eyebrow">Sortie prévue · 1er janvier 2027</span>
+    <a class="btn small" href="#info">Suivre la sortie</a>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Fiscalité crypto</p>
+        <h1><span>Votre rapport fiscal crypto,</span> <span class="keep">sans rien partager.</span></h1>
+      </div>
+
+      <figure class="doc" role="img" aria-label="Exemple fictif de la fenêtre de l'application Satoche&nbsp;: rapport 2026, prix de cession 3 200 euros, prix total d'acquisition 9 400 euros, valeur globale du portefeuille 12 000 euros, plus-value 693 euros. Stocké sur cet ordinateur. Envoyé à Satoche, 0 octet.">
+        <div class="win" aria-hidden="true">
+          <span class="stamp">Données&nbsp;: chez vous</span>
+          <div class="win-bar"><span class="lights"><i></i><i></i><i></i></span><span class="win-name">Satoche</span></div>
+          <div class="win-main">
+            <div class="side"><small>Foyer fiscal</small><span>Portefeuilles</span><span>Historique</span><span class="on">Rapport 2026</span></div>
+            <div class="win-body">
+              <div class="win-head"><p class="win-title">Cession du 12 mars</p></div>
+              <div class="line" style="--i:0"><span>Prix de cession</span><span>3 200 €</span></div>
+              <div class="line" style="--i:1"><span>Prix total d'acquisition</span><span>9 400 €</span></div>
+              <div class="line" style="--i:2"><span>Valeur globale du portefeuille</span><span>12 000 €</span></div>
+              <div class="line" style="--i:3"><span>9 400 × 3 200 ÷ 12 000</span><span>2 507 €</span></div>
+              <div class="line result" style="--i:4"><span>Plus-value</span><span>693 €</span></div>
+            </div>
+          </div>
+          <div class="doc-status"><div><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg> Stocké sur cet ordinateur</div><div class="net">Envoyé à Satoche ↑ 0 octet</div></div>
+        </div>
+      </figure>
+
+      <div class="hero-rest">
+        <p class="lede">Satoche calcule vos plus-values et prépare vos formulaires sur votre ordinateur. Vos transactions, vos portefeuilles et vos montants <span class="ok">restent chez vous</span>.</p>
+        <a class="btn" href="#info">Suivre la sortie</a>
+        <p class="cta-note">Sortie prévue le 1er janvier 2027 · Gratuit jusqu'au rapport</p>
+      </div>
+    </div>
+  </div>
+
+  <ul class="proofs wrap" aria-label="Preuves">
+    <li>Sans compte ni e-mail</li>
+    <li>Calcul sur votre ordinateur</li>
+    <li>Formulaires officiels 2086, 2042-C, 3916-bis</li>
+    <li>Calcul affiché ligne par ligne</li>
+  </ul>
+
+  <section id="comment">
+    <div class="wrap">
+      <div class="rail"><span class="no">1</span><span>Comment ça marche</span></div>
+      <h2>Trois étapes, sur votre ordinateur.</h2>
+      <ol class="steps">
+        <li><h3>Ajoutez vos sources</h3><p>Adresses de portefeuilles et exports de vos plateformes. Elles sont enregistrées sur votre ordinateur.</p></li>
+        <li><h3>Vérifiez l'historique</h3><p>L'application signale ce qui manque&nbsp;: un transfert sans contrepartie, un prix absent.</p></li>
+        <li><h3>Générez le rapport</h3><p>Il donne les valeurs des formulaires officiels 2086, 2042-C et 3916-bis, avec le détail du calcul, à reporter sur impots.gouv.fr, où vous déclarez.</p></li>
+      </ol>
+      <p class="legal">Selon l'<a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038612228" rel="noopener noreferrer" target="_blank">article 150 VH bis du Code général des impôts ↗</a>, chaque particulier déclare chaque année le montant global de ses plus-values et moins-values sur cessions d'actifs numériques, sauf si le total de ses cessions de l'année n'excède pas 305&nbsp;€.</p>
+      <p class="cta-row"><a class="btn" href="#info">Suivre la sortie</a></p>
+    </div>
+  </section>
+
+  <section id="pourquoi">
+    <div class="wrap">
+      <div class="rail"><span class="no">2</span><span>Pourquoi sans rien partager</span></div>
+      <h2><span class="accent">Avec un assistant fiscal en ligne, vos données partent sur des serveurs.</span> Avec Satoche, elles restent chez vous.</h2>
+      <p class="intro">Un assistant fiscal en ligne stocke vos transactions, vos adresses et vos soldes sur ses serveurs, et ces bases peuvent fuir&nbsp;: <button type="button" class="linklike" aria-expanded="false" aria-controls="leaks">fuites publiques depuis décembre 2025</button>.</p>
+
+      <div class="leaks" id="leaks" hidden>
+        <ul class="facts">
+          <li><span class="date">Déc. 2025</span><span>Un service fiscal crypto international signale une fuite des e-mails de ses clients, via son outil de mesure d'audience.<sup><a href="#src-1" aria-label="Source 1">1</a></sup></span></li>
+          <li><span class="date">Janv. 2026</span><span>Un assistant fiscal crypto français se fait voler ses données clients (e-mails, soldes, données de rapports) et subit une tentative d'extorsion. Les attaquants revendiquent environ 50 000 clients. Le parquet de Paris enquête.<sup><a href="#src-2" aria-label="Source 2">2</a>, <a href="#src-3" aria-label="Source 3">3</a></sup></span></li>
+          <li><span class="date">Janv. 2026</span><span>Les autorités alertent&nbsp;: les données volées dans le secteur crypto servent à des arnaques ciblées, et des malfaiteurs vont jusqu'à menacer et agresser physiquement les victimes.<sup><a href="#src-2" aria-label="Source 2">2</a></sup></span></li>
+          <li><span class="date">Sept. 2026</span><span>Le même type de service, nouvel incident&nbsp;: un accès à son compte chez son prestataire d'e-mails. Adresses e-mail et départements de ses clients.<sup><a href="#src-4" aria-label="Source 4">4</a></sup></span></li>
+          <li><span class="date">Janv.–août 2026</span><span>Plus de 70 enlèvements et séquestrations liés aux cryptomonnaies en France, selon le parquet national anticriminalité organisée, contre 67 sur toute l'année 2025.<sup><a href="#src-5" aria-label="Source 5">5</a></sup></span></li>
+        </ul>
+        <ol class="sources" aria-label="Sources">
+          <li id="src-1">Crypto Briefing, décembre 2025. <a href="https://cryptobriefing.com/koinly-email-leak-mixpanel/" rel="noopener noreferrer" target="_blank">cryptobriefing.com ↗</a></li>
+          <li id="src-2">Cybermalveillance.gouv.fr, alerte sur les violations de données dans le secteur des crypto-actifs, 22 janvier 2026, mise à jour le 8 juin 2026. <a href="https://www.cybermalveillance.gouv.fr/tous-nos-contenus/actualites/violation-de-donnees-secteur-crypto-actifs-202601" rel="noopener noreferrer" target="_blank">cybermalveillance.gouv.fr ↗</a></li>
+          <li id="src-3">Cryptoast, violation de données et tentative d'extorsion, janvier 2026. <a href="https://cryptoast.fr/waltio-frappe-violation-donnees-tentative-extorsion/" rel="noopener noreferrer" target="_blank">cryptoast.fr ↗</a></li>
+          <li id="src-4">Fuites Infos, 15 septembre 2026. <a href="https://fuitesinfos.fr/article/2026-09-15-waltio" rel="noopener noreferrer" target="_blank">fuitesinfos.fr ↗</a></li>
+          <li id="src-5">franceinfo, chiffres du parquet national anticriminalité organisée, 11 septembre 2026. <a href="https://www.franceinfo.fr/economie/bitcoin/cryptomonnaies-plus-de-70-enlevements-et-sequestrations-recenses-sur-les-huit-premiers-mois-de-2026-d-apres-le-parquet-national-anticriminalite-organisee_8188352.html" rel="noopener noreferrer" target="_blank">franceinfo.fr ↗</a></li>
+        </ol>
+      </div>
+
+      <div class="versus" role="img" aria-label="À gauche, un assistant fiscal en ligne&nbsp;: vos transactions, adresses, soldes, plus-values, e-mail et clés d'accès partent de votre ordinateur vers ses serveurs, s'ajoutent à une base clients qui grossit, et des bases de ce type ont déjà été copiées lors de fuites. À droite, Satoche&nbsp;: les mêmes données restent verrouillées sur votre ordinateur, zéro octet envoyé à Satoche, et la base clients de Satoche ne contient que des paiements de 49 euros, sans donnée crypto.">
+        <figure class="db db-them" id="db-them" aria-hidden="true">
+          <div class="db-top"><span>Un assistant fiscal en ligne</span><span class="db-sent">Envoyé ↑ <span id="sent">0 ko</span></span></div>
+          <div class="lane">
+            <div class="node node-home">
+              <div class="laptop">
+                <div class="laptop-screen"></div>
+                <div class="laptop-base"></div>
+              </div>
+              <span>Votre ordinateur</span>
+            </div>
+            <div class="wire">
+              <span class="pkt" style="--d:0s">Transactions</span>
+              <span class="pkt" style="--d:1.2s">Adresses</span>
+              <span class="pkt" style="--d:2.4s">Soldes</span>
+              <span class="pkt" style="--d:3.6s">Plus-values</span>
+              <span class="pkt" style="--d:4.8s">E-mail</span>
+              <span class="pkt" style="--d:6s">Clés d'accès</span>
+            </div>
+            <div class="node node-srv">
+              <svg viewBox="0 0 40 40" width="36" height="36"><rect x="4" y="3" width="32" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="15" width="32" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="27" width="32" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="30" cy="8" r="1.6" fill="currentColor"/><circle cx="30" cy="20" r="1.6" fill="currentColor"/><circle cx="30" cy="32" r="1.6" fill="currentColor"/></svg>
+              <div class="srv-chips"><span class="chip" style="--d:0s">Transactions</span><span class="chip" style="--d:1.2s">Adresses</span><span class="chip" style="--d:2.4s">Soldes</span><span class="chip" style="--d:3.6s">Plus-values</span><span class="chip" style="--d:4.8s">E-mail</span><span class="chip" style="--d:6s">Clés d'accès</span></div>
+              <span>Leurs serveurs</span>
+            </div>
+          </div>
+          <div class="db-caption"><span>Base clients</span><span class="db-count"><span id="count">48 213</span> clients</span></div>
+          <div class="db-head"><span>E-mail</span><span>Dépt</span><span class="col-addr">Adresse</span><span>Solde</span><span>Plus-value</span></div>
+          <div class="db-window"><div class="db-rows" id="rows"></div></div>
+          <div class="db-breach"><span class="db-stamp" id="breach-stamp">Volé</span><span class="db-note" id="breach-note">Janvier 2026 · données clients volées</span></div>
+        </figure>
+
+        <figure class="db db-us" aria-hidden="true">
+          <div class="db-top"><span>Satoche</span><span class="db-sent">Envoyé à Satoche ↑ 0 octet</span></div>
+          <div class="lane">
+            <div class="node node-home">
+              <div class="laptop">
+                <div class="laptop-screen">
+                  <svg class="laptop-lock" viewBox="0 0 24 24" width="18" height="18"><rect x="4" y="10" width="16" height="11" rx="2" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
+                  <span class="chip">Transactions</span><span class="chip">Adresses</span><span class="chip">Soldes</span><span class="chip">Plus-values</span><span class="chip">Rapport</span>
+                </div>
+                <div class="laptop-base"></div>
+              </div>
+              <span>Votre ordinateur</span>
+            </div>
+            <div class="wire wire-cut"><span class="zero"><svg viewBox="0 0 28 28" width="28" height="28"><circle cx="14" cy="14" r="12" fill="var(--bg)" stroke="currentColor" stroke-width="2"/><path d="M9 9l10 10M19 9L9 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span class="zero-label">Rien envoyé</span></span></div>
+            <div class="node node-srv node-ghost">
+              <svg viewBox="0 0 40 40" width="36" height="36"><rect x="4" y="3" width="32" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="15" width="32" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="27" width="32" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="30" cy="8" r="1.6" fill="currentColor"/><circle cx="30" cy="20" r="1.6" fill="currentColor"/><circle cx="30" cy="32" r="1.6" fill="currentColor"/></svg>
+              <span>Aucune donnée reçue</span>
+            </div>
+          </div>
+          <div class="db-caption"><span>Base clients</span><span class="db-count">Paiements uniquement</span></div>
+          <div class="db-head"><span>Client</span><span class="col-addr">Adresse</span><span>Solde</span><span>Plus-value</span><span>Paiement</span></div>
+          <div class="db-row"><span>achat #A41F</span><span class="col-addr dash">—</span><span class="dash">—</span><span class="dash">—</span><span class="pay">49&nbsp;€</span></div>
+          <div class="db-row"><span>achat #7C02</span><span class="col-addr dash">—</span><span class="dash">—</span><span class="dash">—</span><span class="pay">49&nbsp;€</span></div>
+          <div class="db-row"><span>achat #E95B</span><span class="col-addr dash">—</span><span class="dash">—</span><span class="dash">—</span><span class="pay">49&nbsp;€</span></div>
+          <div class="db-row"><span>achat #3D6A</span><span class="col-addr dash">—</span><span class="dash">—</span><span class="dash">—</span><span class="pay">49&nbsp;€</span></div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="tarif">
+    <div class="wrap">
+      <div class="rail"><span class="no">3</span><span>Tarif</span></div>
+      <h2>Un rapport fiscal, un prix unique.</h2>
+      <div class="plans">
+        <div class="plan">
+          <p class="plan-price">0&nbsp;€</p>
+          <h3>Le suivi de vos portefeuilles</h3>
+          <p>Portefeuilles réunis, historique complet, opérations classées, trous repérés.</p>
+        </div>
+        <div class="plan plan-paid">
+          <p class="plan-price">49&nbsp;€</p>
+          <h3>Votre rapport fiscal de l'année</h3>
+          <p>Valeurs des formulaires 2086, 2042-C et 3916-bis, détail du calcul en PDF. Régénérable jusqu'à votre déclaration.</p>
+        </div>
+      </div>
+      <p class="plan-note">Pas d'abonnement. Pas de prix qui augmente avec le nombre de transactions. Pas de surprise.</p>
+      <p class="cta-row"><a class="btn" href="#info">Suivre la sortie</a></p>
+    </div>
+  </section>
+
+  <section id="premiere-version">
+    <div class="wrap">
+      <div class="rail"><span class="no">4</span><span>La première version</span></div>
+      <h2>On commence par un cas précis.</h2>
+      <div class="scope">
+        <div class="scope-row"><span class="k">Système</span><span class="now">macOS 26 ou plus récent</span></div>
+        <div class="scope-row"><span class="k">Crypto</span><span class="now">Bitcoin (BTC)&nbsp;: adresses et clés publiques étendues (xpub)</span></div>
+        <div class="scope-row"><span class="k">Foyer fiscal</span><span class="now">Ne détient que du Bitcoin</span></div>
+        <div class="scope-row"><span class="k">Plateforme</span><span class="now">Bitstack (export CSV)</span></div>
+        <div class="scope-row"><span class="k">Règles fiscales</span><span class="now">France, revenus 2026</span></div>
+        <div class="scope-row"><span class="k">Autres opérations</span><span class="now">À saisir à la main</span></div>
+      </div>
+      <p class="scope-next">Ensuite&nbsp;: d'autres systèmes, cryptos, plateformes et pays, et l'import automatique des autres opérations.</p>
+    </div>
+  </section>
+
+  <section class="info" id="info">
+    <div class="wrap">
+      <div class="rail"><span class="no">5</span><span>Sortie prévue · 1er janvier 2027</span></div>
+      <div class="info-grid">
+        <div>
+          <h2>Suivez la sortie à votre façon.</h2>
+          <p>Sortie prévue le 1er janvier 2027, à temps pour votre rapport 2026. Ouverte à tous, sans liste d'attente ni e-mail, parce qu'un fichier d'e-mails de détenteurs de cryptos est une cible<sup><a href="#src-1" aria-label="Source 1">1</a>, <a href="#src-4" aria-label="Source 4">4</a></sup>.</p>
+        </div>
+        <ol class="rdv">
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+            <div>
+              <h3>Un rappel dans votre calendrier</h3>
+              <p>Créé dans votre navigateur&nbsp;: rien ne nous est envoyé.</p>
+              <button class="btn" id="add-to-calendar" type="button">Ajouter à mon calendrier</button>
+            </div>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5a14 14 0 0 1 14 14M5 11a8 8 0 0 1 8 8"/><circle cx="6" cy="18" r="1.2"/></svg>
+            <div>
+              <h3>Les nouvelles dans votre lecteur RSS</h3>
+              <p>Un fil d'actualités que vous lisez sans vous identifier.</p>
+              <a class="btn" href="feed.xml">S'abonner au fil RSS</a>
+            </div>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-5 4v-4h-.5A.5.5 0 0 1 4 15.5z"/></svg>
+            <div>
+              <h3>Une conversation avec nous</h3>
+              <p>SimpleX, une messagerie sans numéro de téléphone ni identifiant.</p>
+              <a class="btn" id="simplex" href="#info">Écrire sur SimpleX</a>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="rail"><span class="no">6</span><span>FAQ</span></div>
+      <h2>Questions.</h2>
+      <details>
+        <summary>Le calcul est-il conforme à la règle française&nbsp;?</summary>
+        <p>Satoche applique la méthode de l'article 150 VH bis du Code général des impôts, ligne par ligne comme sur le formulaire 2086, et affiche le détail de chaque résultat. C'est un calcul, pas un conseil fiscal&nbsp;: vous restez responsable de votre déclaration.</p>
+      </details>
+      <details>
+        <summary>L'application se connecte-t-elle à Internet&nbsp;?</summary>
+        <p>Oui, pour lire la blockchain et les cours des cryptos. Ces services voient les adresses consultées et votre adresse IP&nbsp;; nous n'en recevons rien. Votre historique, vos montants et votre rapport restent sur votre ordinateur.</p>
+      </details>
+      <details>
+        <summary>Que savez-vous de moi&nbsp;?</summary>
+        <p>Si vous achetez le rapport&nbsp;: que vous avez payé 49&nbsp;€, via un prestataire de paiement. Tout le reste demeure sur votre ordinateur, sans aucun accès pour nous.</p>
+      </details>
+      <details>
+        <summary>Est-ce que ça sert à cacher mes cryptos au fisc&nbsp;?</summary>
+        <p>Non. Satoche sert à établir un rapport juste, et la déclaration se fait toujours sur impots.gouv.fr. Elle protège votre historique complet&nbsp;: il reste chez vous, au lieu d'être copié chez une entreprise de plus.</p>
+      </details>
+      <p class="cta-row"><a class="btn" href="#info">Suivre la sortie</a></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="logo" href="#" aria-label="Satoche, haut de page"><svg class="sym" viewBox="0 0 701.5 200" role="img" aria-hidden="true"><use href="#wm"/></svg></a>
+    <span>Ce site ne collecte rien&nbsp;: aucune inscription, aucun cookie, aucun traceur, aucun script tiers.</span>
+    <span>Le code de ce site est public&nbsp;: <a href="https://github.com/satoche-dev/satoche-web" rel="noopener noreferrer">le dépôt sur GitHub</a>. Vérifiez-le.</span>
+    <span>Satoche est un nom de travail.</span>
+    <span>Mentions légales. Éditeur et directeur de la publication&nbsp;: Augustin Delaporte. Contact&nbsp;: <a href="https://github.com/satoche-dev/satoche-web/issues" rel="noopener noreferrer">ouvrir une discussion sur le dépôt public</a>. Hébergeur&nbsp;: GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.</span>
+  </div>
+</footer>
+
+<script>
+  // The release date, and the SimpleX contact link once the account exists.
+  const RELEASE_DATE = "2027-01-01";
+  const SIMPLEX_LINK = "https://smp17.simplex.im/a#wN5D_l7pBgy7GoW0Cz4Hm2a46ziYU96WJeKKDUJDA88";
+
+  // The online platform's customer table: fake rows, a growing counter, and a copy every few seconds.
+  const rows = document.getElementById("rows");
+  const count = document.getElementById("count");
+  const dbThem = document.getElementById("db-them");
+  const note = document.getElementById("breach-note");
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let seed = 7;
+  const rand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const pick = (list) => list[Math.floor(rand() * list.length)];
+  const euros = (n) => Math.round(n).toLocaleString("fr-FR") + " €";
+  const domains = ["gmail.com", "proton.me", "orange.fr", "free.fr", "outlook.fr", "icloud.com", "yahoo.fr", "laposte.net"];
+  const letters = "abcdefghijklmnoprstv";
+  const hex = "0123456789abcdef";
+  const tail = (chars) => Array.from({ length: 4 }, () => pick(chars)).join("");
+  const row = (cells, you) => '<div class="db-row' + (you ? ' is-you' : '') + '">' +
+    cells.map((c, i) => '<span' + (i === 2 ? ' class="col-addr"' : '') + '>' + c + '</span>').join("") + "</div>";
+
+  let html = "";
+  for (let i = 0; i < 22; i++) {
+    if (i === 8) {
+      html += row(["vous@exemple.fr", "69", "bc1q…x8f2", "38 200 €", "+7 400 €"], true);
+      continue;
+    }
+    const gain = (rand() - 0.25) * 30000;
+    html += row([
+      pick(letters) + "•••••@" + pick(domains),
+      String(1 + Math.floor(rand() * 95)).padStart(2, "0"),
+      rand() < 0.6 ? "bc1q…" + tail("023456789acdefghjklmnpqrstuvwxyz") : "0x…" + tail(hex),
+      euros(500 + rand() * rand() * 250000),
+      (gain >= 0 ? "+" : "−") + euros(Math.abs(gain))
+    ]);
+  }
+  rows.innerHTML = html + html;
+
+  const sent = document.getElementById("sent");
+  let kilobytes = 0;
+  const size = (ko) => ko < 1000 ? Math.round(ko) + " ko" : (ko / 1000).toLocaleString("fr-FR", { maximumFractionDigits: 1, minimumFractionDigits: 1 }) + " Mo";
+
+  let customers = 48213;
+  const incidents = [
+    { stamp: "Volé", note: "Janvier 2026 · données clients volées, extorsion" },
+    { stamp: "Fuite", note: "Septembre 2026 · e-mails et départements exposés" },
+    { stamp: "Fuite", note: "Décembre 2025 · e-mails exposés via un outil d'audience" }
+  ];
+  const stampEl = document.getElementById("breach-stamp");
+  if (reduceMotion) {
+    note.textContent = "3 incidents publics depuis décembre 2025";
+    sent.textContent = "tout votre historique";
+  } else {
+    setInterval(() => {
+      kilobytes += 12 + Math.random() * 60;
+      sent.textContent = size(kilobytes);
+    }, 250);
+    setInterval(() => {
+      customers += 1 + Math.floor(Math.random() * 3);
+      count.textContent = customers.toLocaleString("fr-FR");
+    }, 900);
+    let next = 0;
+    const copy = () => {
+      stampEl.textContent = incidents[next].stamp;
+      note.textContent = incidents[next].note;
+      next = (next + 1) % incidents.length;
+      dbThem.classList.add("breached");
+      setTimeout(() => dbThem.classList.remove("breached"), 3400);
+    };
+    setTimeout(copy, 2500);
+    setInterval(copy, 8000);
+  }
+
+  // The calendar event is built here, in the browser. Nothing leaves the page.
+  document.getElementById("add-to-calendar").addEventListener("click", () => {
+    const day = RELEASE_DATE.replaceAll("-", "");
+    const next = new Date(RELEASE_DATE + "T00:00:00Z");
+    next.setUTCDate(next.getUTCDate() + 1);
+    const end = next.toISOString().slice(0, 10).replaceAll("-", "");
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Satoche//Release//FR",
+      "BEGIN:VEVENT",
+      "UID:" + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2)) + "@satoche",
+      "DTSTAMP:" + stamp,
+      "DTSTART;VALUE=DATE:" + day,
+      "DTEND;VALUE=DATE:" + end,
+      "SUMMARY:Sortie de Satoche",
+      "DESCRIPTION:Le lien de téléchargement est publié sur le site et dans le fil RSS.",
+      "URL:" + location.origin + location.pathname,
+      "END:VEVENT",
+      "END:VCALENDAR",
+      ""
+    ].join("\r\n");
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+    link.download = "satoche-sortie.ics";
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+
+  // The link in the text unfolds the public leaks right below it; a source link unfolds it too.
+  const leaks = document.getElementById("leaks");
+  const leaksToggle = document.querySelector('[aria-controls="leaks"]');
+  const showLeaks = (open) => { leaks.hidden = !open; leaksToggle.setAttribute("aria-expanded", String(open)); };
+  leaksToggle.addEventListener("click", () => showLeaks(leaks.hidden));
+  const openSource = () => { if (location.hash.startsWith("#src-")) { showLeaks(true); const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); } };
+  addEventListener("hashchange", openSource);
+  openSource();
+
+  const simplex = document.getElementById("simplex");
+  if (SIMPLEX_LINK) {
+    simplex.href = SIMPLEX_LINK;
+    simplex.rel = "noopener noreferrer";
+  } else {
+    simplex.textContent = "SimpleX\u00a0: bientôt";
+    simplex.removeAttribute("href");
+    simplex.setAttribute("aria-disabled", "true");
+  }
+</script>
+</body>
+</html>
