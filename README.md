@@ -42,9 +42,10 @@ python3 -m http.server 4321 --bind 127.0.0.1 --directory public
 
 ## Deployment
 
-GitHub Pages, from `.github/workflows/pages.yml`: each push to `main` publishes `public/`.
+GitHub Pages, from the root `.github/workflows/pages.yml`: each push to `main` that changes
+`website/public/` publishes that folder.
 
-The repository is public on purpose: anyone can check that the page has no tracker, no cookie and no
+The published page is public on purpose: anyone can check that it has no tracker, no cookie and no
 third-party request.
 
 GitHub Pages sets no custom HTTP headers. The security policy and the `noindex` live in the page, as
