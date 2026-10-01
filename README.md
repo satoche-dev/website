@@ -1,7 +1,7 @@
 # Satoche website
 
 The landing page of Satoche, a macOS app that prepares the French crypto tax declaration on the
-user's computer. "Satoche" is a working name (trademark not cleared).
+user's computer.
 
 ## Files
 
