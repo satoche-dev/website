@@ -50,15 +50,17 @@ The monorepo is private, so the page is served from a public mirror, `satoche-de
 push to `main` that changes `website/`, the root `.github/workflows/pages.yml` updates two branches of
 the mirror:
 
-- `gh-pages`: a copy of `website/public/`, which GitHub Pages serves.
-- `main`: `git subtree split --prefix=website`, with a force push.
+- `gh-pages`: a copy of `website/public/`, which GitHub Pages serves. Each publish adds a commit
+  that replaces the files and keeps the history.
+- `main`: `git subtree split --prefix=website`, with a force push that replaces the history.
 
-Never edit the mirror by hand: the next publish overwrites it.
+Never edit the mirror by hand. The only exception is the recovery after a leaked deploy key, in the
+monorepo threat model.
 
 The split makes public the message, the author and committer names and emails, and the dates of
 each commit that changes `website/`, old commits included. Commit with an email that you accept to
-make public. Keep
-website changes in their own commits, and write nothing internal in their messages.
+make public. Keep website changes in their own commits, and write nothing internal in their
+messages.
 
 The mirror is public on purpose: anyone can check that the page has no tracker, no cookie and no
 third-party request.
