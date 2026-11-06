@@ -21,10 +21,11 @@ user's computer. Read the [README](README.md) first.
 
 ## Files
 
-- `public/` is what GitHub Pages publishes, on each push to `main`.
+- `public/` is what GitHub Pages publishes, on each push to `main` of the monorepo.
 - `drafts/` holds local design explorations. Git ignores it.
 - Preview: `python3 -m http.server 4321 --bind 127.0.0.1 --directory public`
 
 ## Workflow
 
-- Commits and pull requests in English. This repository is public: never commit anything internal.
+- The public repository is a read-only mirror. Change `website/` in the monorepo.
+- Commits and pull requests in English. The mirror is public: never commit anything internal.

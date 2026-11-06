@@ -1,11 +1,14 @@
 # Satoche website
 
+> **Read-only mirror.** This repository is a subtree split of `website/` in the private Satoche
+> monorepo. Pull requests are disabled. Use issues to contact us.
+
 The landing page of Satoche, a macOS app that prepares the French crypto tax declaration on the
 user's computer.
 
 ## Files
 
-Only `public/` is published.
+GitHub Pages serves only `public/`. The `main` branch of the mirror holds all of `website/`.
 
 | File | Content |
 | --- | --- |
@@ -42,9 +45,17 @@ python3 -m http.server 4321 --bind 127.0.0.1 --directory public
 
 ## Deployment
 
-The monorepo is private, so the page is served from a public mirror, `satoche-dev/website`,
-branch `gh-pages`. The root `.github/workflows/pages.yml` copies `website/public/` there on each push
-to `main` that changes it. Never edit the mirror by hand: the next publish overwrites it.
+The monorepo is private, so the page is served from a public mirror, `satoche-dev/website`. On each
+push to `main` that changes `website/`, the root `.github/workflows/pages.yml` updates two branches of
+the mirror:
+
+- `gh-pages`: a copy of `website/public/`, which GitHub Pages serves.
+- `main`: `git subtree split --prefix=website`, with a force push.
+
+Never edit the mirror by hand: the next publish overwrites it.
+
+The split makes public the message and the author of each commit that changes `website/`. Keep
+website changes in their own commits, and write nothing internal in their messages.
 
 The mirror is public on purpose: anyone can check that the page has no tracker, no cookie and no
 third-party request.
@@ -57,6 +68,8 @@ One-time setup:
    and variables, Actions). Then delete both local files.
 4. In `website`, set Pages to deploy from branch `gh-pages`, folder `/ (root)`, with the custom
    domain `satoche.dev`.
+5. In `website`, disable pull requests and mark the repository as a mirror:
+   `gh api -X PATCH repos/satoche-dev/website -F has_pull_requests=false -f description='Web landing page. READONLY SUBTREE SPLIT of website/ in the satoche monorepo.'`
 
 GitHub Pages sets no custom HTTP headers. The security policy and the `noindex` live in the page, as
 meta tags.
