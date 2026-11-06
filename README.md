@@ -1,7 +1,8 @@
 # Satoche website
 
-> **Read-only mirror.** This repository is a subtree split of `website/` in the private Satoche
-> monorepo. Pull requests are disabled. Use issues to contact us.
+> **Read-only mirror.** The public repository `satoche-dev/website` is a subtree split of `website/`
+> in the private Satoche monorepo. Change the files in the monorepo. The mirror takes no pull
+> requests: use its issues to contact us.
 
 The landing page of Satoche, a macOS app that prepares the French crypto tax declaration on the
 user's computer.
@@ -54,7 +55,8 @@ the mirror:
 
 Never edit the mirror by hand: the next publish overwrites it.
 
-The split makes public the message and the author of each commit that changes `website/`. Keep
+The split makes public the message, the author name and the author email of each commit that
+changes `website/`, old commits included. Commit with an email that you accept to make public. Keep
 website changes in their own commits, and write nothing internal in their messages.
 
 The mirror is public on purpose: anyone can check that the page has no tracker, no cookie and no
