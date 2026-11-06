@@ -55,8 +55,9 @@ the mirror:
 
 Never edit the mirror by hand: the next publish overwrites it.
 
-The split makes public the message, the author name and the author email of each commit that
-changes `website/`, old commits included. Commit with an email that you accept to make public. Keep
+The split makes public the message, the author and committer names and emails, and the dates of
+each commit that changes `website/`, old commits included. Commit with an email that you accept to
+make public. Keep
 website changes in their own commits, and write nothing internal in their messages.
 
 The mirror is public on purpose: anyone can check that the page has no tracker, no cookie and no
